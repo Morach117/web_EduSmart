@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipos</title>
+    <title>Examen</title>
 </head>
 
 <body>
@@ -17,17 +17,17 @@
                         <div class="text-end pt-3 pe-5">
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#modal-examen">
-                                Administrar equipos
+                                Administrar examenes
                             </button>
                         </div>
                         <div class="card-body">
                             <fieldset class="form-fieldset">
                                 <div class="col">
                                     <h2 class="page-title">
-                                        Modulo de selección de equipos
+                                        Modulo de selección de examenes
                                     </h2>
                                     <h2 class="page-pretitle">
-                                        ingresa el nombre de la unidad temática
+                                        ingresa el nombre del examen
                                         que deseas modificar
                                     </h2>
                                     <hr class="m-0" />
@@ -49,12 +49,58 @@
             while ($selExamenRow = $selExamen->fetch(PDO::FETCH_ASSOC)) {
                 ?>
                 <tr>
-                    <td>
-                        <?php echo $selExamenRow['id_materia'] ?>
-                    </td>
-                    <td>
-                        <?php echo $selExamenRow['id_materia'] ?>
-                    </td>
+                <td>
+                    <?php
+                    // Obtener el id de la materia
+                    $idMateria = $selExamenRow['id_materia'];
+
+                    // Realizar la consulta para obtener el nombre de la materia
+                    $consultaMateria = "SELECT nombre_materia FROM materias WHERE id_materia = :idMateria";
+                    $stmtMateria = $conn->prepare($consultaMateria);
+                    $stmtMateria->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
+                    $stmtMateria->execute();
+
+                    // Verificar si la consulta fue exitosa
+                    if ($stmtMateria) {
+                        // Obtener el nombre de la materia
+                        $filaMateria = $stmtMateria->fetch();
+                        $nombreMateria = $filaMateria['nombre_materia'];
+
+                        // Mostrar el nombre de la materia
+                        echo $nombreMateria;
+                    } else {
+                        // Manejar el error si la consulta no fue exitosa
+                        echo "Error al obtener la materia";
+                    }
+                    ?>
+                </td>
+
+            <td>
+                <?php
+                // Obtener el id de la unidad
+                $idUnidad = $selExamenRow['id_unidad'];
+
+                // Realizar la consulta para obtener el nombre de la unidad
+                $consultaUnidad = "SELECT nombre_unidad FROM unidades_tematicas WHERE id_unidad = :idUnidad";
+                $stmtUnidad = $conn->prepare($consultaUnidad);
+                $stmtUnidad->bindParam(':idUnidad', $idUnidad, PDO::PARAM_INT);
+                $stmtUnidad->execute();
+
+                // Verificar si la consulta fue exitosa
+                if ($stmtUnidad) {
+                    // Obtener el nombre de la unidad
+                    $filaUnidad = $stmtUnidad->fetch();
+                    $nombreUnidad = $filaUnidad['nombre_unidad'];
+
+                    // Mostrar el nombre de la unidad
+                    echo $nombreUnidad;
+                } else {
+                    // Manejar el error si la consulta no fue exitosa
+                    echo "Error al obtener la unidad";
+                }
+                ?>
+            </td>
+
                     <!-- Agrega las demás columnas según sea necesario -->
                     <td>
                         <?php echo $selExamenRow['tipo_examen'] ?>

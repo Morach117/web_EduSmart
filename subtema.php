@@ -72,9 +72,6 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                                                                         <?php echo $selTemadRow['nombre'] ?>
                                                                     </td>
                                                                     <td>
-                                                                        <a href="subtema.php?id=<?php echo $selTemadRow['id_tema    '] ?>"
-                                                                            class="btn btn-primary">Agregar subtema</a>
-
                                                                         <a href="contenido.php?id=<?php echo $selTemadRow['id_tema'] ?>"
                                                                             class="btn btn-primary">Agregar contenido</a>
 
