@@ -395,6 +395,10 @@ include("./query/selectData.php"); //incluye el archivo de consultas a la base d
                             <label class="custom-file-label" for="file-input">Elegir archivo</label>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <p>Descargar plantilla:</p>
+                        <a href="./Plantilla.csv" download="Plantilla.csv" class="btn btn-outline-primary">Descargar Plantilla</a>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

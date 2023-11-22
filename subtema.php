@@ -45,8 +45,9 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
 
                                                 <div class="col-4">
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#modalContenido">
+                                                        data-bs-target="#modalAgregarsubTema">
                                                         Agregar Subtema
+                                                    </button>
                                                     </button>
                                                 </div>
                                             </div>
@@ -57,13 +58,13 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                                                     style="width:100%">
                                                     <thead>
                                                         <tr>
-                                                            <th scope="col">ID</th>
                                                             <th scope="col">Subtema</th>
+                                                            <th scope="col">Acción</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php
-                                                        $selTema = $conn->query("SELECT * FROM subtemas WHERE id_subtema = $id");
+                                                        $selTema = $conn->query("SELECT * FROM subtemas WHERE id_tema = $id");
                                                         if ($selTema->rowCount() > 0) {
                                                             while ($selTemadRow = $selTema->fetch(PDO::FETCH_ASSOC)) {
                                                                 ?>
@@ -80,7 +81,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                                                                 <?php
                                                             }
                                                         } else {
-                                                            echo "<tr><td colspan='3'>No hay temas registrados.</td></tr>";
+                                                            echo "<tr><td colspan='3'>No hay subtemas registrados.</td></tr>";
                                                         }
                                                         ?>
                                                     </tbody>
@@ -96,67 +97,110 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
             </div>
         </div>
     </div>
-    <!-- Modal Body-->
-    <div class="modal fade " id="modalAgregarTema" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitleId">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        Add rows here
+
+<!-- Modal Body-->
+<!-- Modal Body-->
+<div class="modal fade" id="modalAgregarsubTema" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">Agregar Nuevo SubTema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-tema" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="tema" class="form-label">Tema:</label>
+                        <select class="form-select" id="tema" name="tema" required>
+                            <?php
+                            // Realiza la consulta para obtener los temas con PDO
+                            $sqlTemas = "SELECT id_tema, nombre FROM tema";
+                            $stmtTemas = $conn->prepare($sqlTemas);
+                            $stmtTemas->execute();
+
+                            // Maneja el resultado de la consulta con PDO
+                            while ($temaRow = $stmtTemas->fetch(PDO::FETCH_ASSOC)) {
+                                // Comprueba si el tema actual coincide con el ID proporcionado
+                                $selected = ($temaRow['id_tema'] == $id) ? 'selected' : '';
+
+                                echo "<option value='{$temaRow['id_tema']}' $selected>{$temaRow['nombre']}</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save</button>
-                </div>
+                    <div class="mb-3">
+                        <label for="nombre_tema" class="form-label">Nombre del SubTema:</label>
+                        <input type="text" class="form-control" id="nombre_tema" name="nombre_tema" required>
+                    </div>
+                    <input type="hidden" name="operacion" id="operacion">
+                    <input type="hidden" name="id_tema" id="id_tema" value="<?php echo $id; ?>">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" id="btnGuardarTema">Guardar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <div class="modal fade " id="modalAgregarSubTema" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitleId">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        Add rows here
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade " id="modalContenido" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitleId">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        Add rows here
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        // Manejo del clic en el botón Guardar
+        $("#btnGuardarTema").on("click", function () {
+            // Obtén los valores del formulario
+            var idTema = $("#tema").val();
+            var nombreTema = $("#nombre_tema").val();
+
+            // Validar que los campos no estén vacíos
+            if (idTema !== '' && nombreTema !== '') {
+                // Realiza la petición Ajax
+                $.ajax({
+                    url: "query/unidad/tema/guardar_tema.php",
+                    method: "POST",
+                    data: {
+                        id_tema: idTema,
+                        nombre_tema: nombreTema
+                    },
+                    success: function (response) {
+                        // Muestra un mensaje de éxito con SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Tema guardado exitosamente',
+                        }).then((result) => {
+                            // Después de cerrar SweetAlert, recarga la página
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        // Muestra un mensaje de error con SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al guardar el tema',
+                            text: 'Por favor, inténtalo de nuevo',
+                        });
+                        console.error("Error al guardar el tema:", textStatus, errorThrown);
+                    }
+                });
+            } else {
+                // Muestra un mensaje de advertencia si algún campo está vacío
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Completa todos los campos',
+                });
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
 
 
 

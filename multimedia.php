@@ -68,6 +68,9 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                                                         data-bs-target="#modalAgregarTema">
                                                         Agregar Tema
                                                     </button>
+                                                    <a href="direcciones.php?page=unidades" class="btn btn-secondary">
+                            Regresar
+                        </a>
                                                 </div>
                                             </div>
                                             <hr class="m-3" />
@@ -95,9 +98,6 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                                                                         <a href="subtema.php?id=<?php echo $selTemadRow['id_tema'] ?>"
                                                                             class="btn btn-primary">Agregar subtema</a>
 
-                                                                        <a href="contenido.php?id=<?php echo $selTemadRow['id_tema'] ?>"
-                                                                            class="btn btn-primary">Agregar contenido</a>
-
                                                                     </td>
                                                                 </tr>
                                                                 <?php
@@ -120,66 +120,53 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
         </div>
     </div>
     <!-- Modal Body-->
-    <div class="modal fade " id="modalAgregarTema" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitleId">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        Add rows here
+    <div class="modal fade" id="modalAgregarTema" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">Agregar Nuevo Tema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-tema" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="unidad" class="form-label">Unidad:</label>
+                        <select class="form-select" id="unidad" name="unidad" required>
+                            <!-- Agrega una opción seleccionada automáticamente -->
+                            <option value="<?php echo $id; ?>" selected><?php
+                                // Realiza la consulta para obtener el nombre de la unidad con PDO
+                                $sqlUnidad = "SELECT nombre_unidad FROM unidades_tematicas WHERE id_unidad = :unidad_id";
+                                $stmtUnidad = $conn->prepare($sqlUnidad);
+                                $stmtUnidad->bindParam(':unidad_id', $id, PDO::PARAM_INT);
+                                $stmtUnidad->execute();
+
+                                // Muestra el nombre de la unidad si la consulta fue exitosa
+                                if ($stmtUnidad) {
+                                    $unidadRow = $stmtUnidad->fetch(PDO::FETCH_ASSOC);
+                                    echo $unidadRow['nombre_unidad'];
+                                } else {
+                                    echo "Error al obtener la unidad";
+                                }
+                                ?>
+                            </option>
+                        </select>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save</button>
-                </div>
+                    <div class="mb-3">
+                        <label for="nombre_tema" class="form-label">Nombre del Tema:</label>
+                        <input type="text" class="form-control" id="nombre_tema" name="nombre_tema" required>
+                    </div>
+                    <input type="hidden" name="operacion" id="operacion">
+                    <input type="hidden" name="id_tema" id="id_tema">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" id="btnGuardarTema">Guardar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <div class="modal fade " id="modalAgregarSubTema" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitleId">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        Add rows here
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade " id="modalContenido" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitleId">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        Add rows here
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
 
 
 
@@ -196,6 +183,60 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
             $('#contenido-table').DataTable();
         });
     </script>
+
+    <!-- Agrega este script al final del cuerpo de tu archivo HTML -->
+    <script>
+    $(document).ready(function () {
+        // Función para manejar el evento de clic en el botón Guardar
+        $("#btnGuardarTema").click(function () {
+            // Obtener los valores del formulario
+            var unidad = $("#unidad").val();
+            var nombre_tema = $("#nombre_tema").val();
+
+            // Validar que los campos no estén vacíos
+            if (unidad !== '' && nombre_tema !== '') {
+                // Realizar la solicitud Ajax
+                $.ajax({
+                    url: "query/unidad/tema/agregar_tema.php", // Reemplaza con la ruta correcta
+                    method: "POST",
+                    data: {
+                        unidad: unidad,
+                        nombre_tema: nombre_tema
+                    },
+                    success: function (data) {
+                        // Muestra un mensaje de éxito con SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Tema agregado exitosamente',
+                        }).then((result) => {
+                            // Cierra el modal después de guardar
+                            $('#modalAgregarTema').modal('hide');
+                            // Recargar la página para actualizar la tabla
+                            location.reload(true);
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus, errorThrown);
+                        // Muestra un mensaje de error con SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al agregar el tema',
+                            text: 'Por favor, inténtalo de nuevo',
+                        });
+                    }
+                });
+            } else {
+                // Muestra un mensaje de advertencia si algún campo está vacío
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Completa todos los campos',
+                });
+            }
+        });
+    });
+</script>
+
+
 </body>
 
 </html>
